@@ -132,7 +132,9 @@ app.get("/", async (req, res) => {
 
 app.get("/allJournals", async (req, res) => {
   try {
-    const allJournals = await Journal.find({});
+    const allJournals = await Journal.find({})
+    .sort({ year: -1, issue: -1 })
+    .exec();
     const currentJournal = await Journal.aggregate([
       {
         $group: {
@@ -154,7 +156,9 @@ app.get("/allJournals", async (req, res) => {
       {
         $replaceRoot: { newRoot: "$documentsWithMaxYear" },
       },
-    ]);
+    ])
+    .sort({ year: -1, issue: -1 })
+    .exec();
     const allYears = await Journal.distinct("year");
     const finalData = {
       allJournals: allJournals,
